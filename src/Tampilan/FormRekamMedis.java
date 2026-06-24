@@ -751,7 +751,7 @@ public void nomorReg(){
     }//GEN-LAST:event_tCariRekKeyPressed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-    kosong();
+    dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnCariPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariPasienActionPerformed
