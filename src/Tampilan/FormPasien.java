@@ -124,6 +124,11 @@ public class FormPasien extends javax.swing.JFrame {
         pnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Form Pasien", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
         pnl.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        pnl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlMouseClicked(evt);
+            }
+        });
 
         tIdPasien.setBackground(new java.awt.Color(218, 218, 255));
         tIdPasien.addActionListener(new java.awt.event.ActionListener() {
@@ -134,7 +139,6 @@ public class FormPasien extends javax.swing.JFrame {
 
         jLabel2.setText("ID Pasien");
 
-        tNamaPasien.setEditable(false);
         tNamaPasien.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel3.setText("Nama Pasien");
@@ -407,44 +411,64 @@ public class FormPasien extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-    String sql = "INSERT INTO pasien (id, nama, jk, alamat, goldar) VALUES (?,?,?,?,?)";
-          try {
-             PreparedStatement stat = this.Conn.prepareStatement(sql);
-             stat.setString(1, this.tIdPasien.getText());
-             stat.setString(2, this.tNamaPasien.getText());
-             String jk = this.rjk1.isSelected() ? "Laki-Laki" : "Perempuan";
-             stat.setString(3, jk);
-             stat.setString(4, this.tAlm.getText());
-             stat.setString(5, this.cgd.getSelectedItem().toString());
-             stat.executeUpdate();
-             JOptionPane.showMessageDialog((Component)null, "Data Berhasil Disimpan");
-             this.kosong();
-             this.dataTable();
-          } catch (SQLException e) {
-             JOptionPane.showMessageDialog((Component)null, "Data Gagal Disimpan: " + e);
-          }
+        String sql = "INSERT INTO pasien (id, nama, jk, alamat, goldar) VALUES (?,?,?,?,?)";
+        try {
+           if (this.tIdPasien.getText().trim().isEmpty() || 
+               this.tNamaPasien.getText().trim().isEmpty() || 
+               this.tAlm.getText().trim().isEmpty() || 
+               this.cgd.getSelectedIndex() == 0 || 
+               (!this.rjk1.isSelected() && !this.rjk2.isSelected())) {
+
+              JOptionPane.showMessageDialog(this, "Semua data harus diisi terlebih dahulu!");
+              return;
+           }
+
+           PreparedStatement stat = this.Conn.prepareStatement(sql);
+           stat.setString(1, this.tIdPasien.getText());
+           stat.setString(2, this.tNamaPasien.getText());
+           String jk = this.rjk1.isSelected() ? "Laki-Laki" : "Perempuan";
+           stat.setString(3, jk);
+           stat.setString(4, this.tAlm.getText());
+           stat.setString(5, this.cgd.getSelectedItem().toString());
+           stat.executeUpdate();
+           JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan");
+           this.kosong();
+           this.dataTable();
+        } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Data Gagal Disimpan: " + e);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        int ok = JOptionPane.showConfirmDialog((Component)null, "Hapus data ini?", "Konfirmasi Hapus", 0);
+        int ok = JOptionPane.showConfirmDialog(this, "Hapus data ini?", "Konfirmasi Hapus", 0);
             if (ok == 0) {
          String sql = "DELETE FROM pasien WHERE id ='" + this.tIdPasien.getText() + "'";
 
          try {
             PreparedStatement stat = this.Conn.prepareStatement(sql);
             stat.executeUpdate();
-            JOptionPane.showMessageDialog((Component)null, "Data Berhasil Dihapus");
+            JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus");
             this.kosong();
             this.dataTable();
          } catch (SQLException e) {
-            JOptionPane.showMessageDialog((Component)null, "Data Gagal Dihapus: " + e);
+            JOptionPane.showMessageDialog(this, "Data Gagal Dihapus: " + e);
          }
       }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        String sql = "UPDATE pasien SET nama=?, jk=?, alamat=?, goldar=? WHERE id=?";
+    String sql = "UPDATE pasien SET nama=?, jk=?, alamat=?, goldar=? WHERE id=?";
       try {
+         if (this.tIdPasien.getText().trim().isEmpty() || 
+             this.tNamaPasien.getText().trim().isEmpty() || 
+             this.tAlm.getText().trim().isEmpty() || 
+             this.cgd.getSelectedIndex() == 0 || 
+             (!this.rjk1.isSelected() && !this.rjk2.isSelected())) {
+             
+            JOptionPane.showMessageDialog(this, "Semua data harus diisi terlebih dahulu!");
+            return;
+         }
+
          PreparedStatement stat = this.Conn.prepareStatement(sql);
          stat.setString(1, this.tNamaPasien.getText());
          String jk = this.rjk1.isSelected() ? "Laki-Laki" : "Perempuan";
@@ -453,16 +477,17 @@ public class FormPasien extends javax.swing.JFrame {
          stat.setString(4, this.cgd.getSelectedItem().toString());
          stat.setString(5, this.tIdPasien.getText());
          stat.executeUpdate();
-         JOptionPane.showMessageDialog((Component)null, "Data Berhasil Diubah");
+         JOptionPane.showMessageDialog(this, "Data Berhasil Diubah");
          this.kosong();
          this.dataTable();
       } catch (SQLException e) {
-         JOptionPane.showMessageDialog((Component)null, "Data Gagal Diubah: " + e);
+         JOptionPane.showMessageDialog(this, "Data Gagal Diubah: " + e);
       }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         this.kosong();
+        this.btnSave.setEnabled(true);
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -474,7 +499,7 @@ public class FormPasien extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel2MouseClicked
 
     private void tTabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tTabelMouseClicked
-         int bar = this.tTabel.getSelectedRow();
+        int bar = this.tTabel.getSelectedRow();
         String id = this.tabmode.getValueAt(bar, 0).toString();
         String nama = this.tabmode.getValueAt(bar, 1).toString();
         String jk = this.tabmode.getValueAt(bar, 2).toString();
@@ -483,6 +508,8 @@ public class FormPasien extends javax.swing.JFrame {
         this.tIdPasien.setText(id);
         this.tNamaPasien.setText(nama);
         this.tAlm.setText(alamat);
+        
+        this.btnSave.setEnabled(false);
         
         if ("Laki-Laki".equals(jk)) {
            this.rjk1.setSelected(true);
@@ -526,6 +553,10 @@ public class FormPasien extends javax.swing.JFrame {
     private void tIdPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tIdPasienActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tIdPasienActionPerformed
+
+    private void pnlMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlMouseClicked
+   // TODO add your handling code here:
+    }//GEN-LAST:event_pnlMouseClicked
 
     /**
      * @param args the command line arguments

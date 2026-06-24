@@ -18,17 +18,28 @@ public class FormDokter extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormDokter.class.getName());
     private Connection Conn = new koneksi().connect();
     private DefaultTableModel tabmode;
+    String kdSpesialis, nmSpesialis, kdPoliklinik, nmPolikiklinik;
     
     // Asumsi method kosong() belum dideklarasikan tapi dipanggil di constructor
     protected void kosong(){
-        tdr.setText("");
+         tdr.setText("");
         tdr.setEnabled(true);
         tndr.setText("");
+        tkdSpl.setText("");
+        tkdSpl.setEnabled(false);
+        tnmSpl.setText("");
+        tnmSpl.setEnabled(false);
+        tkdPoli.setText("");
+        tkdPoli.setEnabled(false);
+        tnmPoli.setText("");
+        tnmPoli.setEnabled(false);
         btnSave.setEnabled(true);
         btnUpdate.setEnabled(false);
         btnDelete.setEnabled(false);
-        cSpl.setSelectedIndex(0);
-        cPoli.setSelectedIndex(0);
+        datatable();
+        KodeDokter();
+       tnmSpl.setEnabled(true);
+        
     }
     
     public FormDokter() {
@@ -38,69 +49,83 @@ public class FormDokter extends javax.swing.JFrame {
         datatable();
         setResizable(false);
         setLocationRelativeTo(null);
-        listpoliklinik();
-        listspesialis();
+        KodeDokter();
+        datatable();
+        
 //        this.setExtendedState(FormDokter.MAXIMIZED_BOTH);
     }
     
     protected void aktif(){
-        tdr.setEnabled(true);
-        tndr.setEnabled(true);
+       tdr.setEnabled(true);
+       tndr.setEnabled(true);
+       tkdSpl.setEnabled(false);
+       tnmSpl.setEnabled(false);
+       tkdPoli.setEnabled(false);
+       tnmPoli.setEnabled(false);
     }
     
-    protected void listpoliklinik(){
-        cPoli.removeAllItems();
-        cPoli.addItem("Pilih Poliklinik");
-        String sql = "SELECT * FROM poliklinik";
-        try {
+    public void KodeDokter() {
+    try {
             java.sql.Statement stat = Conn.createStatement();
+            String sql = "SELECT id_dokter FROM dokter ORDER BY id_dokter "
+                    + "DESC LIMIT 1";
             ResultSet hasil = stat.executeQuery(sql);
-            while (hasil.next()) {
-                String b = hasil.getString("nama_poliklinik");
-                cPoli.addItem(b);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane, e);
-        }
-    }
+            if (hasil.next()) {
+                String lastId = hasil.getString("id_dokter");
+                String nomorAngka = lastId.substring(2);
+                int angkaBerikutnya = Integer.parseInt(nomorAngka) + 1;
 
-    protected void listspesialis(){
-        cSpl.removeAllItems(); // Diperbaiki: Menggunakan JComboBox cSpl, bukan pnl (JPanel)
-        cSpl.addItem("Pilih Spesialis");
-        String sql = "SELECT * FROM spesialis";
-        try {
-            java.sql.Statement stat = Conn.createStatement();
-            ResultSet hasil = stat.executeQuery(sql);
-            while (hasil.next()) {
-                String b = hasil.getString("nama_spl");
-                cSpl.addItem(b);
+                String angkaFormatted = String.format("%03d", angkaBerikutnya);
+                tdr.setText("DR" + angkaFormatted);
+            } else {
+                tdr.setText("DR001");
             }
-        } catch (SQLException e) { 
-            JOptionPane.showMessageDialog(null, "Data not found \n" + e);
+        } catch (NumberFormatException | SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Gagal membuat kode "
+                    + "dokter otomatis: " + e.getMessage());
         }
     }
     
     protected void datatable(){
-        Object[] Baris = {"ID Dokter ","Nama Dokter","Spesialis","POLIKLINIK"};
-        tabmode = new DefaultTableModel(null, Baris);
+        Object[] Baris ={"ID DOKTER","NAMA DOKTER","KODE SPESIALIS","SPESIALIS",
+            "KODE POLIKLINIK","POLIKLINIK"};
+        tabmode = new DefaultTableModel(null,Baris);
         tabeldokter.setModel(tabmode);
-        
-        String sql = "SELECT * FROM view_detail_dokter"; // Diperbaiki: ditambah '*'
+
+        String sql = "SELECT * FROM view_detail_dokter";
         try {
-            java.sql.Statement stat = Conn.createStatement(); // Diperbaiki: Steatment -> Statement
-            ResultSet hasil = stat.executeQuery(sql); // Diperbaiki: Menggunakan stat
-            while(hasil.next()){
+            java.sql.Statement stat= Conn.createStatement();
+            ResultSet hasil = stat.executeQuery(sql);
+            while (hasil.next()) {
                 String a = hasil.getString("id_dokter");
                 String b = hasil.getString("nama_dokter");
-                String c = hasil.getString("nama_spl");
-                String d = hasil.getString("nama_poliklinik");
-                
-                String[] data = {a, b, c, d};
+                String c = hasil.getString("spesialis");
+                String d = hasil.getString("nama_spl");
+                String e = hasil.getString("poliklinik");
+                String f = hasil.getString("nama_poliklinik");
+
+                String[] data ={a,b,c,d,e,f};
                 tabmode.addRow(data);
             }
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal memuat tabel: " + e);
+            JOptionPane.showMessageDialog(null, "Gagal memuat data tabel: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+    
+    public void itemTerpilihSpesialis(){
+        popupSpesialis ppSpesiaslis = new popupSpesialis();
+        ppSpesiaslis.Spl=this;
+        tkdSpl.setText(kdSpesialis);
+        tnmSpl.setText(nmSpesialis);
+    }
+
+    public void itemTerpilihPoliklinik(){
+        popupPoli ppPoli = new popupPoli();
+        ppPoli.poli=this;
+        tkdPoli.setText(kdPoliklinik);
+        tnmPoli.setText(nmPolikiklinik);
     }
     
     
@@ -114,21 +139,25 @@ public class FormDokter extends javax.swing.JFrame {
         pnl = new javax.swing.JPanel();
         tdr = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        tndr = new javax.swing.JTextField();
+        tnmSpl = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        cSpl = new javax.swing.JComboBox<>();
-        cPoli = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         btnSave = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
-        lkdsp = new javax.swing.JLabel();
-        lkdpoli = new javax.swing.JLabel();
+        tkdSpl = new javax.swing.JTextField();
+        btn_ppSpl = new javax.swing.JButton();
+        tndr = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        tkdPoli = new javax.swing.JTextField();
+        btn_ppPoli = new javax.swing.JButton();
+        tnmPoli = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        tcari = new javax.swing.JTextField();
+        tCaridokter = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         btnCari = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -153,37 +182,18 @@ public class FormDokter extends javax.swing.JFrame {
 
         jLabel2.setText("Kode Dokter");
 
-        tndr.setBackground(new java.awt.Color(218, 218, 255));
+        tnmSpl.setBackground(new java.awt.Color(218, 218, 255));
+        tnmSpl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tnmSplActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Nama Dokter");
 
-        jLabel4.setText("Spesialis");
+        jLabel4.setText("Kode Spesialis");
 
-        cSpl.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cSpl.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cSplItemStateChanged(evt);
-            }
-        });
-        cSpl.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                cSplPropertyChange(evt);
-            }
-        });
-
-        cPoli.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cPoli.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cPoliItemStateChanged(evt);
-            }
-        });
-        cPoli.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cPoliActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("Poliklinik");
+        jLabel5.setText("Nama Spesialis");
 
         btnSave.setBackground(new java.awt.Color(218, 218, 255));
         btnSave.setText("SAVE");
@@ -225,6 +235,42 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
+        tkdSpl.setBackground(new java.awt.Color(218, 218, 255));
+
+        btn_ppSpl.setText("Pilih Spesialis");
+        btn_ppSpl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ppSplActionPerformed(evt);
+            }
+        });
+
+        tndr.setBackground(new java.awt.Color(218, 218, 255));
+
+        jLabel7.setText("Kode Poliklinik");
+
+        tkdPoli.setBackground(new java.awt.Color(218, 218, 255));
+        tkdPoli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tkdPoliActionPerformed(evt);
+            }
+        });
+
+        btn_ppPoli.setText("Pilih Poliklinik");
+        btn_ppPoli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ppPoliActionPerformed(evt);
+            }
+        });
+
+        tnmPoli.setBackground(new java.awt.Color(218, 218, 255));
+        tnmPoli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tnmPoliActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Nama Poliklinik");
+
         javax.swing.GroupLayout pnlLayout = new javax.swing.GroupLayout(pnl);
         pnl.setLayout(pnlLayout);
         pnlLayout.setHorizontalGroup(
@@ -234,23 +280,11 @@ public class FormDokter extends javax.swing.JFrame {
                 .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlLayout.createSequentialGroup()
                         .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel4))
-                        .addGap(24, 24, 24))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)))
-                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLayout.createSequentialGroup()
-                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(cSpl, javax.swing.GroupLayout.Alignment.LEADING, 0, 422, Short.MAX_VALUE)
-                            .addComponent(cPoli, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lkdsp)
-                            .addComponent(lkdpoli)))
-                    .addGroup(pnlLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3))
+                        .addGap(11, 11, 11)
                         .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlLayout.createSequentialGroup()
                                 .addComponent(btnSave)
@@ -262,10 +296,24 @@ public class FormDokter extends javax.swing.JFrame {
                                 .addComponent(btnClear)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnClose))
-                            .addComponent(tndr, javax.swing.GroupLayout.PREFERRED_SIZE, 453, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tdr, javax.swing.GroupLayout.PREFERRED_SIZE, 453, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addGroup(pnlLayout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlLayout.createSequentialGroup()
+                                        .addComponent(tkdSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btn_ppSpl))
+                                    .addComponent(tnmSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tdr, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(pnlLayout.createSequentialGroup()
+                                        .addComponent(tkdPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btn_ppPoli))
+                                    .addComponent(tnmPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tndr, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlLayout.setVerticalGroup(
             pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,24 +327,36 @@ public class FormDokter extends javax.swing.JFrame {
                 .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tndr, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tkdSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_ppSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tnmSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(pnlLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel4)))
+                .addGap(18, 18, 18)
+                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tkdPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(btn_ppPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cSpl, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(lkdsp))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(lkdpoli))
-                .addGap(92, 92, 92)
+                    .addComponent(tnmPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addGroup(pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(47, 47, 47))
         );
 
         jPanel2.setBackground(new java.awt.Color(153, 153, 255));
@@ -309,7 +369,7 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
-        tcari.setBackground(new java.awt.Color(218, 218, 255));
+        tCaridokter.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel6.setText("Cari Dokter");
 
@@ -346,11 +406,11 @@ public class FormDokter extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
-                        .addComponent(tcari)
+                        .addComponent(tCaridokter)
                         .addGap(18, 18, 18)
                         .addComponent(btnCari)))
                 .addGap(5, 5, 5))
@@ -360,12 +420,12 @@ public class FormDokter extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tcari, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tCaridokter, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -394,8 +454,8 @@ public class FormDokter extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(25, 25, 25))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -406,29 +466,89 @@ public class FormDokter extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        String sql = "INSERT INTO dokter VALUES (?,?,?,?) ";
-        try{
-            PreparedStatement stat = Conn.prepareStatement(sql);
-            stat.setString(1, tdr.getText());
-            stat.setString(2, tndr.getText());
-            stat.setString(3, lkdsp.getText());
-            stat.setString(4, lkdpoli.getText());
-            stat.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data Dokter Berhasil Disimpan");
-            kosong();
-            tdr.requestFocus();
-            datatable();
-        }catch (SQLException e){
-            JOptionPane.showMessageDialog(null,"Data Dokter Gagal Disimpan " + e);
+    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+    
+    }//GEN-LAST:event_jPanel2MouseClicked
+
+    private void tabeldokterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabeldokterMouseClicked
+       int bar = tabeldokter.getSelectedRow();
+        String a = tabmode.getValueAt(bar, 0).toString();
+        String b = tabmode.getValueAt(bar, 1).toString();
+        String c = tabmode.getValueAt(bar, 2).toString();
+        String d = tabmode.getValueAt(bar, 3).toString();
+        String e = tabmode.getValueAt(bar, 4).toString();
+        String f = tabmode.getValueAt(bar, 5).toString();
+
+        tdr.setText(a);
+        tdr.setEnabled(false);
+        tndr.setText(b);
+        tkdSpl.setText(c);
+        tnmSpl.setText(d);
+        tkdPoli.setText(e);
+        tnmPoli.setText(f);
+        
+        btnSave.setEnabled(false);
+        btnUpdate.setEnabled(true);
+        btnDelete.setEnabled(true);
+    }//GEN-LAST:event_tabeldokterMouseClicked
+
+    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
+    Object[] Baris = {"ID DOKTER","NAMA DOKTER","SPESIALIS","POLIKLINIK"};
+    tabmode = new DefaultTableModel(null, Baris);
+    String sql = "SELECT * FROM view_detail_dokter where nama_dokter LIKE '%"+tCaridokter.getText()+"%' "
+            + "OR id_dokter LIKE '%"+tCaridokter.getText()+"%'";
+    try {
+        java.sql.Statement stat = Conn.createStatement();
+        ResultSet hasil = stat.executeQuery(sql);
+        while(hasil.next()){
+            String a = hasil.getString("id_dokter");
+            String b = hasil.getString("nama_dokter");
+            String c = hasil.getString("nama_spl");
+            String d = hasil.getString("nama_poliklinik");
+
+            String[] data ={a,b,c,d};
+            tabmode.addRow(data);
         }
-    }//GEN-LAST:event_btnSaveActionPerformed
+        tabeldokter.setModel(tabmode);
+    } catch (Exception e) {
+    }
+    }//GEN-LAST:event_btnCariActionPerformed
+
+    private void tnmPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tnmPoliActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tnmPoliActionPerformed
+
+    private void btn_ppPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ppPoliActionPerformed
+        popupPoli ppPoli = new popupPoli();
+        ppPoli.poli= this;
+        ppPoli.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_ppPoliActionPerformed
+
+    private void tkdPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkdPoliActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tkdPoliActionPerformed
+
+    private void btn_ppSplActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ppSplActionPerformed
+        popupSpesialis ppSpesialis = new popupSpesialis();
+        ppSpesialis.Spl= this;
+        ppSpesialis.setVisible(true);         // TODO add your handling code here:
+    }//GEN-LAST:event_btn_ppSplActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        this.kosong();
+    }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         int hapus = JOptionPane.showConfirmDialog(null, "Anda yakin akan Menghapus Data Dokter ini?", "Konfirmasi Dialog", JOptionPane.YES_NO_OPTION);
@@ -449,128 +569,47 @@ public class FormDokter extends javax.swing.JFrame {
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         try {
-        String sql = "UPDATE dokter set nama_dokter=?, spesialis=?, poliklinik=? WHERE id_dokter=?";
-        PreparedStatement stat = Conn.prepareStatement(sql);
-        stat.setString(1, tndr.getText());
-        stat.setString(2, lkdsp.getText());
-        stat.setString(3, lkdpoli.getText());
-        stat.setString(4, tdr.getText());
+            String sql = "UPDATE dokter set nama_dokter=?, spesialis=?, poliklinik=? WHERE id_dokter=?";
+            PreparedStatement stat = Conn.prepareStatement(sql);
+            stat.setString(1, tndr.getText());
+            stat.setString(2, tkdSpl.getText());
+            stat.setString(3, tkdPoli.getText());
+            stat.setString(4, tdr.getText());
 
-        stat.executeUpdate();
-        JOptionPane.showMessageDialog(null, "Data Dokter Berhasil Diperbarui");
-        kosong();
-        tdr.requestFocus();
-        datatable();
+            stat.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Data Dokter Berhasil Diperbarui");
+            kosong();
+            tdr.requestFocus();
+            datatable();
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Data Dokter Gagal Diperbarui");
-    }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data Dokter Gagal Diperbarui");
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
-    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        this.kosong();
-    }//GEN-LAST:event_btnClearActionPerformed
-
-    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCloseActionPerformed
-
-    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
-    
-    }//GEN-LAST:event_jPanel2MouseClicked
-
-    private void tabeldokterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabeldokterMouseClicked
-        int bar = tabeldokter.getSelectedRow();
-        String a = tabmode.getValueAt(bar,0).toString();
-        String b = tabmode.getValueAt(bar,1).toString();
-        String c = tabmode.getValueAt(bar,2).toString();
-        String d = tabmode.getValueAt(bar,3).toString();
-
-        tdr.setText(a);
-        tndr.setText(b);
-        tdr.setEnabled(false);
-        cSpl.setSelectedItem(c);
-        cPoli.setSelectedItem(d);
-        btnSave.setEnabled(false);
-        btnUpdate.setEnabled(true);
-        btnDelete.setEnabled(true);
-    }//GEN-LAST:event_tabeldokterMouseClicked
-
-    private void cPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cPoliActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cPoliActionPerformed
-
-    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-    Object[] Baris = {"ID DOKTER", "NAMA DOKTER", "SPESIALIS", "POLIKLINIK"};
-    tabmode = new DefaultTableModel(null, Baris);
-    tabeldokter.setModel(tabmode);
-    
-    String sql = "SELECT * FROM view_detail_dokter WHERE id_dokter LIKE '%" + tcari.getText() + "%' OR nama_dokter LIKE '%" + tcari.getText() + "%'";
-    
-    try {
-        java.sql.Statement stat = Conn.createStatement();
-        ResultSet hasil = stat.executeQuery(sql);
-        while (hasil.next()) {
-            String a = hasil.getString("id_dokter");
-            String b = hasil.getString("nama_dokter");
-            String c = hasil.getString("nama_spl");        
-            String d = hasil.getString("nama_poliklinik");  
-            
-            String[] data = {a, b, c, d};
-            tabmode.addRow(data);
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Pencarian Gagal: " + e);
-    }  
-    }//GEN-LAST:event_btnCariActionPerformed
-
-    private void cSplPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cSplPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cSplPropertyChange
-
-    private void cSplItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cSplItemStateChanged
-                                               // TODO add your handling code here:
-       if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-        
-        if (cSpl.getSelectedItem().toString().equals("Pilih Spesialis")) {
-            lkdsp.setText("");
-            return;
-        }
-
-        String sql = "SELECT * FROM spesialis WHERE nama_spl = '" + cSpl.getSelectedItem() + "'";
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        String sql = "INSERT INTO dokter values (?,?,?,?)";
         try {
-            java.sql.Statement stat = Conn.createStatement();
-            ResultSet hasil = stat.executeQuery(sql);
-            if (hasil.next()) {
-                lkdsp.setText(hasil.getString("id_spl"));
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Data tidak ditemukan \n" + ex);
-        }
-    }
-    }//GEN-LAST:event_cSplItemStateChanged
+            PreparedStatement stat = Conn.prepareStatement(sql);
+            stat.setString(1, tdr.getText());
+            stat.setString(2, tndr.getText());
+            stat.setString(3, tkdSpl.getText());
+            stat.setString(4, tkdPoli.getText());
 
-    private void cPoliItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cPoliItemStateChanged
-    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-        
-       
-        if (cPoli.getSelectedItem().toString().equals("Pilih Poliklinik")) {
-            lkdpoli.setText("");
-            return;
-        }
+            stat.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Data Dokter Berhasil Disimpan");
+            kosong();
+            tdr.requestFocus();
+            datatable();
 
-        String sql = "SELECT * FROM poliklinik WHERE nama_poliklinik = '" + cPoli.getSelectedItem() + "'";
-        try {
-            java.sql.Statement stat = Conn.createStatement();
-            ResultSet hasil = stat.executeQuery(sql);
-            if (hasil.next()) {
-                lkdpoli.setText(hasil.getString("id_poliklinik"));
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Data tidak ditemukan \n" + ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data Dokter Gagal Disimpan");
         }
-    }    // TODO add your handling code here:
-    }//GEN-LAST:event_cPoliItemStateChanged
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void tnmSplActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tnmSplActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tnmSplActionPerformed
 
     private void tdrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tdrActionPerformed
         // TODO add your handling code here:
@@ -621,23 +660,27 @@ public class FormDokter extends javax.swing.JFrame {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<String> cPoli;
-    private javax.swing.JComboBox<String> cSpl;
+    private javax.swing.JButton btn_ppPoli;
+    private javax.swing.JButton btn_ppSpl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lkdpoli;
-    private javax.swing.JLabel lkdsp;
     private javax.swing.JPanel pnl;
+    private javax.swing.JTextField tCaridokter;
     private javax.swing.JTable tabeldokter;
-    private javax.swing.JTextField tcari;
     private javax.swing.JTextField tdr;
+    private javax.swing.JTextField tkdPoli;
+    private javax.swing.JTextField tkdSpl;
     private javax.swing.JTextField tndr;
+    private javax.swing.JTextField tnmPoli;
+    private javax.swing.JTextField tnmSpl;
     // End of variables declaration//GEN-END:variables
 }
