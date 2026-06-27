@@ -118,9 +118,6 @@ public class FormPasien extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
 
-        backgroundPnl.setBackground(new java.awt.Color(102, 102, 255));
-
-        pnl.setBackground(new java.awt.Color(153, 153, 255));
         pnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Form Pasien", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
         pnl.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
@@ -130,7 +127,6 @@ public class FormPasien extends javax.swing.JFrame {
             }
         });
 
-        tIdPasien.setBackground(new java.awt.Color(218, 218, 255));
         tIdPasien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tIdPasienActionPerformed(evt);
@@ -138,8 +134,6 @@ public class FormPasien extends javax.swing.JFrame {
         });
 
         jLabel2.setText("ID Pasien");
-
-        tNamaPasien.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel3.setText("Nama Pasien");
 
@@ -193,7 +187,6 @@ public class FormPasien extends javax.swing.JFrame {
         group1.add(rjk2);
         rjk2.setText("Perempuan");
 
-        tAlm.setBackground(new java.awt.Color(218, 218, 255));
         tAlm.setColumns(20);
         tAlm.setRows(5);
         jScrollPane2.setViewportView(tAlm);
@@ -293,7 +286,6 @@ public class FormPasien extends javax.swing.JFrame {
                 .addGap(32, 32, 32))
         );
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "List Pasien", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -303,9 +295,7 @@ public class FormPasien extends javax.swing.JFrame {
             }
         });
 
-        tCari.setBackground(new java.awt.Color(218, 218, 255));
-
-        jLabel6.setText("Cari Dokter");
+        jLabel6.setText("Cari Pasien");
 
         btnCari.setText("CARI");
         btnCari.addActionListener(new java.awt.event.ActionListener() {
@@ -314,7 +304,6 @@ public class FormPasien extends javax.swing.JFrame {
             }
         });
 
-        tTabel.setBackground(new java.awt.Color(218, 218, 255));
         tTabel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

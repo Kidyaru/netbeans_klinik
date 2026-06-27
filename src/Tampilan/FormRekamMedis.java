@@ -239,12 +239,7 @@ public void nomorReg(){
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel6.setBackground(new java.awt.Color(102, 102, 255));
-
-        jPanel1.setBackground(new java.awt.Color(153, 153, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-
-        no_reg.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("No. Pendaftaran");
@@ -252,7 +247,6 @@ public void nomorReg(){
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Tanggal Periksa");
 
-        jDate_periksa.setBackground(new java.awt.Color(218, 218, 255));
         jDate_periksa.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jDate_periksaPropertyChange(evt);
@@ -290,7 +284,6 @@ public void nomorReg(){
                 .addContainerGap(28, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -313,38 +306,26 @@ public void nomorReg(){
                 .addContainerGap())
         );
 
-        jPanel3.setBackground(new java.awt.Color(153, 153, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FORM PASIEN", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("Id Pasien");
 
-        tidPasien.setBackground(new java.awt.Color(218, 218, 255));
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Nama Pasien");
-
-        tnamaPasien.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Gol darah");
 
-        tGoldar.setBackground(new java.awt.Color(218, 218, 255));
-
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Tinggi Badan");
-
-        tTinggi.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Berat Badan");
 
-        tBerat.setBackground(new java.awt.Color(218, 218, 255));
-
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("Diagnosa");
 
-        tDiagnosa.setBackground(new java.awt.Color(218, 218, 255));
         tDiagnosa.setColumns(20);
         tDiagnosa.setRows(5);
         jScrollPane1.setViewportView(tDiagnosa);
@@ -430,10 +411,7 @@ public void nomorReg(){
                 .addContainerGap())
         );
 
-        jPanel4.setBackground(new java.awt.Color(153, 153, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FORM PASIEN", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
-
-        tidDokter.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setText("Id Dokter");
@@ -441,14 +419,8 @@ public void nomorReg(){
         jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel13.setText("Nama Dokter");
 
-        tnamaDokter.setBackground(new java.awt.Color(218, 218, 255));
-
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel14.setText("Spesialis");
-
-        tSpesialis.setBackground(new java.awt.Color(218, 218, 255));
-
-        tPoli.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("Poliklinik");
@@ -540,20 +512,17 @@ public void nomorReg(){
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel5.setBackground(new java.awt.Color(153, 153, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "LIST REKAM MEDIS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel16.setText("Cari Data");
 
-        tCariRek.setBackground(new java.awt.Color(218, 218, 255));
         tCariRek.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tCariRekKeyPressed(evt);
             }
         });
 
-        tabelrekam.setBackground(new java.awt.Color(218, 218, 255));
         tabelrekam.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

@@ -166,14 +166,10 @@ public class FormDokter extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 255));
-
-        pnl.setBackground(new java.awt.Color(153, 153, 255));
         pnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Form Dokter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         pnl.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
 
-        tdr.setBackground(new java.awt.Color(218, 218, 255));
         tdr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tdrActionPerformed(evt);
@@ -182,7 +178,6 @@ public class FormDokter extends javax.swing.JFrame {
 
         jLabel2.setText("Kode Dokter");
 
-        tnmSpl.setBackground(new java.awt.Color(218, 218, 255));
         tnmSpl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tnmSplActionPerformed(evt);
@@ -235,8 +230,6 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
-        tkdSpl.setBackground(new java.awt.Color(218, 218, 255));
-
         btn_ppSpl.setText("Pilih Spesialis");
         btn_ppSpl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -244,11 +237,8 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
-        tndr.setBackground(new java.awt.Color(218, 218, 255));
-
         jLabel7.setText("Kode Poliklinik");
 
-        tkdPoli.setBackground(new java.awt.Color(218, 218, 255));
         tkdPoli.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tkdPoliActionPerformed(evt);
@@ -262,7 +252,6 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
-        tnmPoli.setBackground(new java.awt.Color(218, 218, 255));
         tnmPoli.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tnmPoliActionPerformed(evt);
@@ -359,7 +348,6 @@ public class FormDokter extends javax.swing.JFrame {
                 .addGap(47, 47, 47))
         );
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "List Dokter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -368,8 +356,6 @@ public class FormDokter extends javax.swing.JFrame {
                 jPanel2MouseClicked(evt);
             }
         });
-
-        tCaridokter.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel6.setText("Cari Dokter");
 
@@ -380,7 +366,6 @@ public class FormDokter extends javax.swing.JFrame {
             }
         });
 
-        tabeldokter.setBackground(new java.awt.Color(218, 218, 255));
         tabeldokter.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

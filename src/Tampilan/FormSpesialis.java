@@ -102,14 +102,10 @@ public class FormSpesialis extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
 
-        backgroundPnl.setBackground(new java.awt.Color(102, 102, 255));
-
-        pnl.setBackground(new java.awt.Color(153, 153, 255));
         pnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Form Spesialis", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
         pnl.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
 
-        tIdSpesialis.setBackground(new java.awt.Color(218, 218, 255));
         tIdSpesialis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tIdSpesialisActionPerformed(evt);
@@ -117,8 +113,6 @@ public class FormSpesialis extends javax.swing.JFrame {
         });
 
         jLabel2.setText("ID Spesialis");
-
-        tNamaSpesialis.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel3.setText("Nama Spesialis");
 
@@ -222,7 +216,6 @@ public class FormSpesialis extends javax.swing.JFrame {
                 .addContainerGap(139, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "List Pasien", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13))); // NOI18N
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -231,8 +224,6 @@ public class FormSpesialis extends javax.swing.JFrame {
                 jPanel2MouseClicked(evt);
             }
         });
-
-        tCari.setBackground(new java.awt.Color(218, 218, 255));
 
         jLabel6.setText("Cari Spesialis");
 
@@ -243,7 +234,6 @@ public class FormSpesialis extends javax.swing.JFrame {
             }
         });
 
-        tTabel.setBackground(new java.awt.Color(218, 218, 255));
         tTabel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
